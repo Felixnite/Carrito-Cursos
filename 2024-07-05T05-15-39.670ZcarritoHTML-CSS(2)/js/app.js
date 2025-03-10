@@ -5,7 +5,12 @@ const vaciarCarritoBtn = document.querySelector('#vaciar-carrito')
 
 let articulosCarrito = [];
 
+function sincronizarLocalStorage() {
+    localStorage.setItem('carrito', JSON.stringify(articulosCarrito));
+}
+
 cargarEventListener();
+
 
 function cargarEventListener(){
     listaCursos.addEventListener('click', agregarCurso)
@@ -13,11 +18,17 @@ function cargarEventListener(){
     vaciarCarritoBtn.addEventListener('click', vaciarCarrito)
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    articulosCarrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    mostrarCursosCarrito();
+});
+
 function agregarCurso(e) {
     e.preventDefault();
     if (e.target.classList.contains('agregar-carrito')) {
         const curso = e.target.parentElement.parentElement;
         leerDatosCurso(curso);
+        sincronizarLocalStorage()
     }
 }
 
@@ -26,12 +37,14 @@ function eliminarCurso(e) {
         const cursoId = e.target.getAttribute('data-id');
         articulosCarrito = articulosCarrito.filter(curso => curso.id !== cursoId);
         mostrarCursosCarrito();
+        sincronizarLocalStorage()
     }
 }
 
 function vaciarCarrito() {
     articulosCarrito = [];
     mostrarCursosCarrito();
+    sincronizarLocalStorage();
 }
 
 function leerDatosCurso(curso) { 
